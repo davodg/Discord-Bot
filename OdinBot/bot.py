@@ -216,4 +216,4 @@ Ainda não funcional
         '''
 
 
-client.run('NzU5NTgwOTYwODgxNjM5NDc0.X2_k5Q.zYWuWVGLEu19DadRCJvz2ivAwtU')
+client.run('token')

@@ -1,3 +1,4 @@
+python 3.7
 git+https://github.com/Rapptz/discord.py
 git+https://github.com/ytdl-org/youtube-dl
 PyNaCl

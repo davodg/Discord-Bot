@@ -1,0 +1,9 @@
+git+https://github.com/Rapptz/discord.py
+git+https://github.com/ytdl-org/youtube-dl
+PyNaCl
+youtube_dl
+asyncio
+discord
+discord.py[voice]
+dnspython
+google-api-python-client

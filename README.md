@@ -2,8 +2,6 @@
 
 Bot para Discord desenvolvido em Python
 
-!!Projeto ainda em desenvolvimento!!
-
 FUNÇÕES:
 
 -clear - Limpa mensagens

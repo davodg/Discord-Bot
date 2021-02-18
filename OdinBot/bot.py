@@ -8,6 +8,7 @@ from random import choice
 # id server teste: 759608170229530654
 # id server among: 702832904585085021
 
+
 youtube_dl.utils.bug_reports_message = lambda: ''
 
 ytdl_format_options = {
@@ -55,7 +56,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
 client = commands.Bot(command_prefix='-')
 status = ['Trabalhando!', 'Tocando música!', 'Moderando']
-queues = []
+queue = []
 
 
 @client.event
@@ -83,31 +84,31 @@ async def on_member_remove(member):
             await channel.send(f'Uma pena que {member.mention} nos deixou...')
 
 
-@client.command()
+@client.command(name='count', help='-count para mostrar o numero de usuários no servidor')
 async def count(ctx):
     member_count = len(ctx.guild.members)
     await ctx.send(f'Esse servidor tem {member_count} membros')
 
 
-@client.command()
+@client.command(name='clear', help='-clear [numero de linhas] para remover linhas')
 async def clear(ctx, linhas=5):
     await ctx.channel.purge(limit=linhas)
     await ctx.send(f'Ok, removi {linhas} mensagens')
 
 
-@client.command()
+@client.command(name='kick', help='-kick [@dousuario] para kickar um usuário')
 async def kick(ctx, member: discord.Member, *, reason=None):
     await member.kick(reason=reason)
     await ctx.send(f'{member} foi kickado, {reason}')
 
 
-@client.command()
+@client.command(name='ban', help='-ban [@dousuario] para banir um usuário')
 async def ban(ctx, member: discord.Member, *, reason=None):
     await member.ban(reason=reason)
     await ctx.send(f'{member} foi banido, {reason}')
 
 
-@client.command()
+@client.command(name='unban', help='-unban [@dousuario] para desbanir um usuário')
 async def unban(ctx, *, member):
     banned_users = await ctx.guild.bans()
     member_name, member_discriminator = member.split('#')
@@ -121,7 +122,7 @@ async def unban(ctx, *, member):
             return
 
 
-@client.command()
+@client.command(name='c', help='-c [qualquer texto] para retornar uma resposta aleatoria')
 async def c(ctx):
     respostas = ['Sim',
                  'Com certeza',
@@ -130,7 +131,7 @@ async def c(ctx):
                  'Claro',
                  'Obviamente',
                  'Não tenho essa informação no momento',
-                 'Sepa',
+                 'Talvez',
                  'Não faço ideia',
                  'Sei la mano',
                  'Não',
@@ -138,82 +139,77 @@ async def c(ctx):
                  'Óbvio que não',
                  'De jeito nenhum',
                  'Sem chance',
-                 'Que pergunta idiota'
+                 'Nem'
                  ]
     await ctx.send(f'{random.choice(respostas)}')
 
 
-@client.command()
+@client.command(name='join', help='Quando em um canal de voz, -join para o bot entrar no mesmo canal')
 async def join(ctx):
     channel = ctx.author.voice.channel
     await channel.connect()
 
 
-@client.command()
+@client.command(name='leave', help='-leave para o bot deixar o canal de voz')
 async def leave(ctx):
     channel = ctx.message.guild.voice_client
-
     await channel.disconnect()
 
 
 @client.command()
-async def play(ctx, url):
-    global queues
+async def queue_(ctx, url):
+    global queue
 
-    server = ctx.message.guild
-    voice_channel = server.voice_client
-
-    async with ctx.typing():
-        player = await YTDLSource.from_url(url, loop=client.loop)
-        voice_channel.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
-
-    await ctx.send('**Tocando:** {}'.format(player.title))
-    del queues[0]
-
-
-@client.command()
-async def pause(ctx):
-    server = ctx.message.guild
-    voice_channel = server.voice_client
-
-    voice_channel.pause()
-
-
-@client.command()
-async def resume(ctx):
-    server = ctx.message.guild
-    voice_channel = server.voice_client
-
-    voice_channel.resume()
-
-
-@client.command()
-async def stop(ctx):
-    server = ctx.message.guild
-    voice_channel = server.voice_client
-
-    voice_channel.stop()
-
-
-'''@client.command(aliases=['p', 'f'])
-async def fila(ctx, url, ):
-    global queues
-
-    queues.append(url)
-    await ctx.send(f'`{url}` Adicionada á fila')
+    queue.append(url)
+    await ctx.send(f'`{url}` added to queue!')
 
 
 @client.command()
 async def remove(ctx, number):
-    global queues
+    global queue
 
     try:
-        del (queues[int(number)])
-        await ctx.send(f'A fila agora é `{queues}!`')
-    except:
-        await ctx.send('Ou a fila ta vazia ou você digitou um numero errado!')
-Ainda não funcional
-        '''
+        del (queue[int(number)])
+        await ctx.send(f'Your queue is now `{queue}!`')
 
+    except:
+        await ctx.send('Your queue is either **empty** or the index is **out of range**')
+
+
+@client.command(name='play', help='-play [url youtube] para tocar uma musica')
+async def play(ctx, url):
+    global queue
+
+    server = ctx.message.guild
+    vc = server.voice_client
+
+    player = await YTDLSource.from_url(url, loop=client.loop)
+    vc.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+    await ctx.send('**Tocando:** {}'.format(player.title))
+    'del queue[0]'
+
+
+@client.command(name='pause', help='-pause para pausar a musica')
+async def pause(ctx):
+    server = ctx.message.guild
+    vc = server.voice_client
+
+    vc.pause()
+
+
+@client.command(name='resume', help='-resume para despausar a musica')
+async def resume(ctx):
+    server = ctx.message.guild
+    vc = server.voice_client
+
+    vc.resume()
+
+
+@client.command(name='stop', help='-stop para parar de tocar a musica')
+async def stop(ctx):
+    server = ctx.message.guild
+    vc = server.voice_client
+
+    vc.stop()
 
 client.run('token')

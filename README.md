@@ -28,3 +28,4 @@ FUNÇÕES:
 
 -stop - Para o audio
 
+Link para testar o bot: https://discord.com/oauth2/authorize?client_id=759580960881639474&permissions=0&scope=bot
